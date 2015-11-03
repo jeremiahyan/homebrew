@@ -3,14 +3,14 @@ class Pdf2htmlex < Formula
   homepage "https://coolwanglu.github.io/pdf2htmlEX/"
   url "https://github.com/coolwanglu/pdf2htmlEX/archive/v0.13.6.tar.gz"
   sha256 "fc133a5791bfd76a4425af16c6a6a2460f672501b490cbda558213cb2b03d5d7"
-  revision 3
+  revision 4
 
   head "https://github.com/coolwanglu/pdf2htmlEX.git"
 
   bottle do
-    sha256 "11a4583c47f559b362693610991d292b68413898d635be42a1fd157b4e537b2f" => :el_capitan
-    sha256 "ad75b68dd45816aeee6730953f9d3aa9df6a2ebdec450ce33cd902f727c2d673" => :yosemite
-    sha256 "da5c6edc1d82b834bcb6f01f2bb0dc8bfd47cbc051b12ecedc9b5b026381e4ec" => :mavericks
+    sha256 "df830f4adb1c44a561f95630c265b818205ca27f3adf4843c4dff65b39874ffe" => :el_capitan
+    sha256 "c05533083e0d8e40394ad834071dd3a5998ef91697bd1af130bd7810bc44b878" => :yosemite
+    sha256 "88db76b93a9d758af6619f85565054f8eae2120bc50b63e664cf85d7a142d48c" => :mavericks
   end
 
   # Pdf2htmlex use an outdated, customised Fontforge installation.
@@ -50,16 +50,16 @@ class Pdf2htmlex < Formula
 
   def install
     resource("fontforge").stage do
-      args = [
-        "--prefix=#{prefix}/fontforge",
-        "--without-libzmq",
-        "--without-x",
-        "--without-iconv",
-        "--disable-python-scripting",
-        "--disable-python-extension"
+      args = %W[
+        --prefix=#{prefix}/fontforge
+        --without-libzmq
+        --without-x
+        --without-iconv
+        --disable-python-scripting
+        --disable-python-extension
       ]
 
-      # Fix linker error; see: http://trac.macports.org/ticket/25012
+      # Fix linker error; see: https://trac.macports.org/ticket/25012
       ENV.append "LDFLAGS", "-lintl"
 
       # Reset ARCHFLAGS to match how we build

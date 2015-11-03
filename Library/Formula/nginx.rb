@@ -22,7 +22,7 @@ class Nginx < Formula
 
   # Before submitting more options to this formula please check they aren't
   # already in Homebrew/homebrew-nginx/nginx-full:
-  # https://github.com/Homebrew/homebrew-nginx/blob/master/nginx-full.rb
+  # https://github.com/Homebrew/homebrew-nginx/blob/master/Formula/nginx-full.rb
   option "with-passenger", "Compile with support for Phusion Passenger module"
   option "with-webdav", "Compile with support for WebDAV module"
   option "with-debug", "Compile with support for debug log"
@@ -137,7 +137,7 @@ class Nginx < Formula
 
   def passenger_caveats; <<-EOS.undent
     To activate Phusion Passenger, add this to #{etc}/nginx/nginx.conf, inside the 'http' context:
-      passenger_root #{Formula["passenger"].opt_libexec}/lib/phusion_passenger/locations.ini;
+      passenger_root #{Formula["passenger"].opt_libexec}/src/ruby_supportlib/phusion_passenger/locations.ini;
       passenger_ruby /usr/bin/ruby;
     EOS
   end

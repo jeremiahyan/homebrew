@@ -1,14 +1,14 @@
 class Node < Formula
   desc "Platform built on the V8 JavaScript runtime to build network applications"
   homepage "https://nodejs.org/"
-  url "https://nodejs.org/dist/v4.1.1/node-v4.1.1.tar.gz"
-  sha256 "6a610935ff52de713cf2af6a26002322e24fd7933a444436f0817a2b84e15a58"
+  url "https://nodejs.org/dist/v5.0.0/node-v5.0.0.tar.gz"
+  sha256 "698d9662067ae6a20a2586e5c09659735fc0050769a0d8f76f979189ceaccdf4"
   head "https://github.com/nodejs/node.git"
 
   bottle do
-    sha256 "ceb4a1721a9d312e9b3853d0cb4165dfa8b3a1d08e01620e56ac841092108c5c" => :el_capitan
-    sha256 "4c6b805490069a6e6b9956c85c0713e5fc666878f7e87d76b69279b61cff64ac" => :yosemite
-    sha256 "e082904a9b900ff07d3bb633a125542e2cedc4de854def6ec7683e7d2d976d51" => :mavericks
+    sha256 "53de115aa6307f01f3e34f560f1258441441336b515287101556bdd4cc753d60" => :el_capitan
+    sha256 "4e7e42bda989b3acc24168e00c62fe4ff5fa09e788c5d84c1add1ef27ae59a5b" => :yosemite
+    sha256 "b6a4b8e9648c0fc982e2284fecf19d3cc007dc7cf93788f573e50d08a399cebd" => :mavericks
   end
 
   option "with-debug", "Build with debugger hooks"
@@ -27,16 +27,20 @@ class Node < Formula
     build 2326
   end
 
+  fails_with :gcc do
+    cause "unrecognized command line option '-std=gnu++0x'"
+  end
+
   resource "npm" do
-    url "https://registry.npmjs.org/npm/-/npm-2.14.4.tgz"
-    sha256 "c8b602de5d51f956aa8f9c34d89be38b2df3b7c25ff6588030eb8224b070db27"
+    url "https://registry.npmjs.org/npm/-/npm-3.3.9.tgz"
+    sha256 "b406bfc670045c2b92432aff419fe22ff28fd439bb0ef4faa14fd6f16bda0c22"
   end
 
   resource "icu4c" do
-    url "https://ssl.icu-project.org/files/icu4c/55.1/icu4c-55_1-src.tgz"
-    mirror "https://fossies.org/linux/misc/icu4c-55_1-src.tgz"
-    version "55.1"
-    sha256 "e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b"
+    url "https://ssl.icu-project.org/files/icu4c/56.1/icu4c-56_1-src.tgz"
+    mirror "https://ftp.mirrorservice.org/sites/download.qt-project.org/development_releases/prebuilt/icu/src/icu4c-56_1-src.tgz"
+    version "56.1"
+    sha256 "3a64e9105c734dcf631c0b3ed60404531bce6c0f5a64bfe1a6402a4cc2314816"
   end
 
   def install
@@ -123,12 +127,10 @@ class Node < Formula
     path = testpath/"test.js"
     path.write "console.log('hello');"
 
-    output = `#{bin}/node #{path}`.strip
+    output = shell_output("#{bin}/node #{path}").strip
     assert_equal "hello", output
-    assert_equal 0, $?.exitstatus
-    output = `#{bin}/node -e "console.log(new Date('2015-09-15').toLocaleDateString('en'))"`.strip
-    assert_match %r{^9/1[45]/2015$}, output # depends on system timezone
-    assert_equal 0, $?.exitstatus
+    output = shell_output("#{bin}/node -e 'console.log(new Intl.NumberFormat().format(1234.56))'").strip
+    assert_equal "1,234.56", output
 
     if build.with? "npm"
       # make sure npm can find node

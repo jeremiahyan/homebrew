@@ -1,18 +1,18 @@
 class Glib < Formula
   desc "Core application library for C"
   homepage "https://developer.gnome.org/glib/"
-  url "https://download.gnome.org/sources/glib/2.46/glib-2.46.0.tar.xz"
-  sha256 "b1cee83469ae7d80f17c267c37f090414e93960bd62d2b254a5a96fbc5baacb4"
+  url "https://download.gnome.org/sources/glib/2.46/glib-2.46.1.tar.xz"
+  sha256 "5a1f03b952ebc3a7e9f612b8724f70898183e31503db329b4f15d07163c8fdfb"
+  revision 1
 
   bottle do
-    sha256 "8a9253f6f7b282bb00382a7b25d3b774e70da4d14e2b29840befc963c4b4a591" => :el_capitan
-    sha256 "a4b9dabbc6336cc45eafb2defdf0bf9022748f644c230295b372614d0ad6420a" => :yosemite
-    sha256 "be4a68f07e3d9a9b2bf8700e48cc51f0cf471cb67c5b2ec7a8777f37b75577ab" => :mavericks
+    sha256 "99d0958231738f83acf2bf3e90202313ca1d082dede24253f33bf8aa50340cfc" => :el_capitan
+    sha256 "bf8681c987aca26ecac56f2c620f289b04fb6760be6e5ad5c9ddd627318b68d9" => :yosemite
+    sha256 "4852f170218d626aad387e1344cecedd74b0c9b0e8f0b61adf1ef44d3a6fafed" => :mavericks
   end
 
   option :universal
   option "with-test", "Build a debug build and run tests. NOTE: Not all tests succeed yet"
-  option "with-static", "Build glib with a static archive."
 
   deprecated_option "test" => "with-test"
 
@@ -26,8 +26,7 @@ class Glib < Formula
   end
 
   resource "config.h.ed" do
-    url "https://svn.macports.org/repository/macports/trunk/dports/devel/glib2/files/config.h.ed", :using => :curl
-    mirror "https://trac.macports.org/export/111532/trunk/dports/devel/glib2/files/config.h.ed"
+    url "https://raw.githubusercontent.com/Homebrew/patches/eb51d82/glib/config.h.ed"
     version "111532"
     sha256 "9f1e23a084bc879880e589893c17f01a2f561e20835d6a6f08fcc1dad62388f1"
   end
@@ -36,7 +35,7 @@ class Glib < Formula
   # but needed to fix an assumption about the location of the d-bus machine
   # id file.
   patch do
-    url "https://raw.githubusercontent.com/Homebrew/patches/59e4d327791d4fe3423c2c871adb98e3f3f07633/glib/hardcoded-paths.diff"
+    url "https://raw.githubusercontent.com/Homebrew/patches/59e4d32/glib/hardcoded-paths.diff"
     sha256 "a4cb96b5861672ec0750cb30ecebe1d417d38052cac12fbb8a77dbf04a886fcb"
   end
 
@@ -44,14 +43,16 @@ class Glib < Formula
   # to unrelated issues in GCC, but improves the situation.
   # Patch submitted upstream: https://bugzilla.gnome.org/show_bug.cgi?id=672777
   patch do
-    url "https://raw.githubusercontent.com/Homebrew/patches/59e4d327791d4fe3423c2c871adb98e3f3f07633/glib/gio.patch"
+    url "https://raw.githubusercontent.com/Homebrew/patches/59e4d32/glib/gio.patch"
     sha256 "cc3f0f6d561d663dfcdd6154b075150f68a36f5a92f94e5163c1c20529bfdf32"
   end
 
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/patches/59e4d327791d4fe3423c2c871adb98e3f3f07633/glib/universal.patch"
-    sha256 "7e1ad7667c7d89fcd08950c9c32cd66eb9c8e2ee843f023d1fadf09a9ba39fee"
-  end if build.universal?
+  if build.universal?
+    patch do
+      url "https://raw.githubusercontent.com/Homebrew/patches/59e4d32/glib/universal.patch"
+      sha256 "7e1ad7667c7d89fcd08950c9c32cd66eb9c8e2ee843f023d1fadf09a9ba39fee"
+    end
+  end
 
   # Reverts GNotification support on OS X.
   # This only supports OS X 10.9, and the reverted commits removed the
@@ -62,7 +63,7 @@ class Glib < Formula
   # also applied to configure and gio/Makefile.in
   if MacOS.version < :mavericks
     patch do
-      url "https://raw.githubusercontent.com/Homebrew/patches/59e4d327791d4fe3423c2c871adb98e3f3f07633/glib/gnotification-mountain.patch"
+      url "https://raw.githubusercontent.com/Homebrew/patches/59e4d32/glib/gnotification-mountain.patch"
       sha256 "723def732304552ca55ae9f5b568ff3e8a59a14d512af72b6c1f0421f8228a68"
     end
   end
@@ -84,12 +85,11 @@ class Glib < Formula
       --disable-silent-rules
       --disable-dtrace
       --disable-libelf
+      --enable-static
       --prefix=#{prefix}
       --localstatedir=#{var}
       --with-gio-module-dir=#{HOMEBREW_PREFIX}/lib/gio/modules
     ]
-
-    args << "--enable-static" if build.with? "static"
 
     system "./configure", *args
 

@@ -1,9 +1,11 @@
 class Pyenv < Formula
   desc "Python version management"
   homepage "https://github.com/yyuu/pyenv"
+  url "https://github.com/yyuu/pyenv/archive/v20151103.tar.gz"
+  sha256 "10eae843b1ea1689dfb274ff9a59be4e35c56205e2b07f08a6a571f026d5b38a"
   head "https://github.com/yyuu/pyenv.git"
-  url "https://github.com/yyuu/pyenv/archive/v20150913.tar.gz"
-  sha256 "7ccee5b7c6c18dd79cfe504f69649e1f644aa495104aa58672c93e35c1eae0a0"
+
+  bottle :unneeded
 
   depends_on "autoconf" => [:recommended, :run]
   depends_on "pkg-config" => [:recommended, :run]

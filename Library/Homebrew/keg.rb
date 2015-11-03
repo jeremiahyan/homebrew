@@ -72,7 +72,7 @@ class Keg
   # These paths relative to the keg's share directory should always be real
   # directories in the prefix, never symlinks.
   SHARE_PATHS = %w[
-    aclocal doc info locale man
+    aclocal doc info java locale man
     man/man1 man/man2 man/man3 man/man4
     man/man5 man/man6 man/man7 man/man8
     man/cat1 man/cat2 man/cat3 man/cat4
@@ -253,12 +253,18 @@ class Keg
     Dir["#{path}/lib/python2.7/site-packages/*.pth"].any?
   end
 
+  def apps
+    app_prefix = optlinked? ? opt_record : path
+    Pathname.glob("#{app_prefix}/{,libexec/}*.app")
+  end
+
   def app_installed?
-    Dir["#{path}/{,libexec/}*.app"].any?
+    !apps.empty?
   end
 
   def elisp_installed?
-    Dir["#{path}/share/emacs/site-lisp/**/*.el"].any?
+    return false unless (path/"share/emacs/site-lisp"/name).exist?
+    (path/"share/emacs/site-lisp"/name).children.any? { |f| %w[.el .elc].include? f.extname }
   end
 
   def version
